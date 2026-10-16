@@ -181,12 +181,12 @@ let SUPS={
 /* ================= Conexão com o backend (Apps Script) =================
    Sem API_URL a Mesa roda em modo demonstração (dados locais), exatamente como o protótipo.
    Com API_URL, os casos vêm da planilha e as ações chamam o validador e o cadastro no SAP.
-   Também aceita ?api=<url>&token=<token> na primeira abertura (fica salvo neste navegador). */
-const CONFIG={API_URL:'',TOKEN:'',POLL_MS:8000};
+   Na Vercel o API_URL já é /api. Abra a Mesa uma vez com ?token=<TOKEN_MESA> (fica salvo neste navegador). Sem token, roda em modo demonstração. */
+const CONFIG={API_URL:'/api',TOKEN:'',POLL_MS:8000};
 const CONN=(()=>{let o={api:CONFIG.API_URL,token:CONFIG.TOKEN};try{const q=new URLSearchParams(location.search);
-  if(q.get('api')){o={api:q.get('api'),token:q.get('token')||''};localStorage.setItem('cc_conn',JSON.stringify(o));history.replaceState(null,'',location.pathname+location.hash)}
-  else if(!o.api){const r=localStorage.getItem('cc_conn');if(r)o=JSON.parse(r)}}catch(e){}return o})();
-const LIVE=!!CONN.api;
+  if(q.get('token')){o={api:q.get('api')||CONFIG.API_URL,token:q.get('token')};localStorage.setItem('cc_conn',JSON.stringify(o));history.replaceState(null,'',location.pathname+location.hash)}
+  else if(!o.token){const r=localStorage.getItem('cc_conn');if(r)o=JSON.parse(r)}}catch(e){}return o})();
+const LIVE=!!(CONN.api&&CONN.token);
 const REF={busy:false,err:null,last:null,sig:''};
 const day=86400000;
 const startOfDay=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
