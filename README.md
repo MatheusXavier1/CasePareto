@@ -25,10 +25,12 @@ A Vercel redeploya sozinha. O `index.html` fica em `public/`, então o 404 anter
 
 ## 2. Banco (Redis)
 
-1. Na Vercel: **Project → Storage → Create Database → Upstash for Redis** (plano gratuito).
-2. Conecte ao projeto. Isso cria `KV_REST_API_URL` e `KV_REST_API_TOKEN` sozinho.
+Funciona com qualquer um dos dois, pelo Marketplace da Vercel (**Project → Storage**):
 
-Sem o banco a API roda em memória e perde os dados a cada execução. Confira em `/api?rota=ping`: deve responder `"armazenamento":"redis"`.
+- **Redis (Redis Inc)**: cria `REDIS_URL`. A API usa conexão TCP (pacote `redis`, já no `package.json`).
+- **Upstash for Redis**: cria `KV_REST_API_URL` e `KV_REST_API_TOKEN`. A API usa REST.
+
+Conecte ao projeto sem prefixo personalizado. Sem banco a API roda em memória e perde os dados a cada execução. Confira em `/api?rota=ping`: deve responder `"armazenamento":"redis (tcp)"` ou `"redis (rest)"`.
 
 ## 3. Variáveis de ambiente
 

@@ -32,7 +32,7 @@ module.exports = async (req, res) => {
   const q = req.query || {};
   const token = q.token || req.headers['x-token'] || '';
   try {
-    if (q.rota === 'ping') return res.status(200).json({ ok: true, armazenamento: mesa.store.REMOTO ? 'redis' : 'memoria (nao persiste na Vercel)' });
+    if (q.rota === 'ping') return res.status(200).json({ ok: true, armazenamento: mesa.store.REMOTO ? 'redis (' + mesa.store.MODO + ')' : 'memoria (nao persiste na Vercel)' });
 
     if (req.method === 'POST') {
       let corpo;

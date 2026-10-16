@@ -3,5 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "description": "Central de Condições Comerciais (Case Pareto): Mesa + API na Vercel",
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "redis": "^5.0.0"
+  }
 }
