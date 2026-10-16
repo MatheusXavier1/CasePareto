@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Central de Condições</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g900:#064b32;--g700:#0a6b45;--g600:#0f8a5a;--g500:#17a673;--g200:#bfe8d6;--g100:#e3f6ee;--g50:#f2faf6;
+  --ink:#16302a;--text:#3b4e48;--muted:#6b7d77;--line:#dbe7e2;--bg:#f4f8f6;--card:#fff;
+  --ia:#6d4fc2;--ia-bg:#efe9fb;--auto:#0f8a5a;--auto-bg:#e3f6ee;--hum:#c9741a;--hum-bg:#fdf0df;--erp:#476072;--erp-bg:#e6edf2;--forn:#2b7fd9;--forn-bg:#e3effc;
+  --ok:#0f8a5a;--warn:#c9741a;--warn-bg:#fff4e2;--bad:#c93b3b;--bad-bg:#fdebeb;
+  --r:14px;--sh:0 1px 2px rgba(10,60,40,.06),0 6px 18px rgba(10,60,40,.06);
+  --font:'Nunito Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:var(--bg);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+h1{font-size:26px;line-height:1.2;color:var(--ink);font-weight:800;letter-spacing:-.01em}
+h2{font-size:18px;color:var(--ink);font-weight:800}
+h3{font-size:15px;color:var(--ink);font-weight:700}
+.muted{color:var(--muted)} .small{font-size:13px} .xs{font-size:12px}
+.row{display:flex;align-items:center;gap:10px} .between{justify-content:space-between} .wrap{flex-wrap:wrap}
+.col{display:flex;flex-direction:column;gap:12px}
+.grow{flex:1;min-width:0}
+svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* layout */
+.app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+.side{background:#fff;border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.logo{display:flex;align-items:center;gap:10px;padding:4px 8px 18px}
+.logo .mark{width:38px;height:38px;border-radius:11px;background:var(--g600);display:grid;place-items:center}
+.logo b{display:block;color:var(--ink);font-weight:800;line-height:1.1}
+.logo span{font-size:12px;color:var(--muted)}
+.nav a{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:11px;color:var(--text);text-decoration:none;font-weight:600;cursor:pointer}
+.nav a:hover{background:var(--g50)} .nav a.on{background:var(--g100);color:var(--g700)}
+.nav .count{margin-left:auto;background:var(--g600);color:#fff;border-radius:99px;font-size:12px;padding:1px 8px;font-weight:700}
+.who{margin-top:auto;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--g50)}
+.who select{width:100%;margin-top:8px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.main{min-width:0}
+.top{display:flex;align-items:center;gap:12px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.content{padding:28px;max-width:1180px;margin:0 auto}
+/* controls */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:10px 16px;border-radius:11px;font-weight:700;cursor:pointer;transition:.12s;white-space:nowrap}
+.btn:hover{border-color:var(--g500);color:var(--g700)}
+.btn.pri{background:var(--g600);border-color:var(--g600);color:#fff}
+.btn.pri:hover{background:var(--g700);border-color:var(--g700);color:#fff}
+.btn.bad{background:#fff;color:var(--bad);border-color:#efc3c3}
+.btn.bad:hover{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.btn.lg{padding:13px 22px;font-size:16px}
+.btn[disabled]{opacity:.45;cursor:not-allowed;pointer-events:none}
+.btn.ghost{border-color:transparent;background:transparent}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:20px}
+.card.flat{box-shadow:none}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;background:var(--g100);color:var(--g700);white-space:nowrap}
+.chip.ia{background:var(--ia-bg);color:var(--ia)} .chip.auto{background:var(--auto-bg);color:var(--auto)} .chip.hum{background:var(--hum-bg);color:var(--hum)}
+.chip.erp{background:var(--erp-bg);color:var(--erp)} .chip.forn{background:var(--forn-bg);color:var(--forn)}
+.chip.bad{background:var(--bad-bg);color:var(--bad)} .chip.gray{background:#eef2f0;color:var(--muted)} .chip.warn{background:var(--warn-bg);color:var(--warn)}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--g200);border-color:var(--g500)}
+textarea{min-height:120px;resize:vertical;line-height:1.55}
+label.l{display:block;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+/* queue */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0}
+.tab{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 16px;font-weight:700;cursor:pointer;color:var(--text)}
+.tab.on{background:var(--g600);border-color:var(--g600);color:#fff}
+.tab small{opacity:.8;margin-left:4px}
+.case{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:16px 18px;cursor:pointer;transition:.12s}
+.case:hover{border-color:var(--g500);transform:translateY(-1px)}
+.case .items{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.help{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px}
+.help div{background:var(--g50);border:1px solid var(--g200);border-radius:12px;padding:14px;font-size:14px}
+.help b{display:flex;align-items:center;gap:8px;color:var(--g700);margin-bottom:4px}
+.n{width:24px;height:24px;border-radius:50%;background:var(--g600);color:#fff;display:inline-grid;place-items:center;font-size:13px;font-weight:800}
+/* stepper */
+.steps{display:flex;gap:0;margin:20px 0;overflow-x:auto;padding-bottom:4px}
+.step{flex:1;min-width:104px;text-align:center;position:relative;font-size:12px;font-weight:700;color:var(--muted)}
+.step::before{content:'';position:absolute;top:14px;left:-50%;width:100%;height:3px;background:var(--line);z-index:0}
+.step:first-child::before{display:none}
+.step .dot{width:30px;height:30px;border-radius:50%;background:#fff;border:3px solid var(--line);display:grid;place-items:center;margin:0 auto 6px;position:relative;z-index:1;color:var(--muted)}
+.step.done{color:var(--g700)} .step.done::before{background:var(--g500)} .step.done .dot{background:var(--g600);border-color:var(--g600);color:#fff}
+.step.cur{color:var(--ink)} .step.cur::before{background:var(--g500)} .step.cur .dot{border-color:var(--g600);color:var(--g700);box-shadow:0 0 0 5px var(--g100)}
+.step.skip .dot{background:#f0f4f2;border-color:#d4dfda;color:#9bb0a8}
+.step small{display:block;font-weight:600;font-size:11px;margin-top:1px}
+.step small.ia{color:var(--ia)} .step small.auto{color:var(--auto)} .step small.hum{color:var(--hum)}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+/* email & fields */
+.mail{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;font-size:14.5px}
+.mail .hd{border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px}
+.mail p+p{margin-top:10px}
+mark{background:#fff2c2;color:inherit;border-radius:4px;padding:0 3px;transition:.15s}
+mark.hl{background:#ffd54a;box-shadow:0 0 0 3px #ffe9a0}
+.field{padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.field.low{border-color:#f0c58a;background:var(--warn-bg)}
+.field.ok{background:#fff}
+.conf{font-size:12px;font-weight:800}
+.conf.hi{color:var(--ok)} .conf.lo{color:var(--warn)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cols.one{grid-template-columns:1fr}
+.cand{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:#fff}
+.cand.sel{border-color:var(--g600);background:var(--g50);box-shadow:0 0 0 3px var(--g100)}
+.bar{height:6px;border-radius:9px;background:var(--line);overflow:hidden;width:80px}
+.bar i{display:block;height:100%;background:var(--g500)}
+/* item card */
+.item{border:1px solid var(--line);border-radius:var(--r);background:#fff;overflow:hidden}
+.item .hd{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--g50);border-bottom:1px solid var(--line)}
+.item .bd{padding:16px 18px}
+.big{font-size:24px;font-weight:800;color:var(--ink)}
+.checks{display:grid;gap:6px;margin:12px 0}
+.ck{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.ck .ico{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;flex:none;margin-top:1px}
+.ck.ok .ico{background:var(--auto-bg);color:var(--ok)} .ck.no .ico{background:var(--bad-bg);color:var(--bad)}
+.ck.no b{color:var(--bad)}
+.ck.warn .ico{background:var(--warn-bg);color:var(--warn)}
+.note{display:flex;gap:10px;padding:12px 14px;border-radius:12px;font-size:14px;align-items:flex-start}
+.note.info{background:var(--g50);border:1px solid var(--g200)} .note.warn{background:var(--warn-bg);border:1px solid #f0d7a8} .note.bad{background:var(--bad-bg);border:1px solid #efc3c3}
+.act{border-top:1px dashed var(--line);margin-top:14px;padding-top:14px}
+/* timeline */
+.tl{position:relative;padding-left:22px}
+.tl::before{content:'';position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl li{list-style:none;position:relative;margin-bottom:14px;font-size:13.5px}
+.tl li::before{content:'';position:absolute;left:-21px;top:5px;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--g500)}
+.tl li.ia::before{border-color:var(--ia)} .tl li.hum::before{border-color:var(--hum)} .tl li.erp::before{border-color:var(--erp)} .tl li.forn::before{border-color:var(--forn)}
+.tl b{color:var(--ink)} .tl time{display:block;font-size:12px;color:var(--muted)}
+/* table */
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:10px 12px;border-bottom:2px solid var(--line)}
+td{padding:12px;border-bottom:1px solid var(--line)}
+/* overlay/modal/toast */
+.ov{position:fixed;inset:0;background:rgba(10,40,30,.45);display:grid;place-items:center;z-index:50;padding:20px}
+.modal{background:#fff;border-radius:18px;max-width:640px;width:100%;max-height:90vh;overflow:auto;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.sc{display:flex;gap:12px;padding:13px;border:1px solid var(--line);border-radius:12px;cursor:pointer;text-align:left;background:#fff;width:100%}
+.sc:hover{border-color:var(--g500);background:var(--g50)}
+.spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--g200);border-top-color:var(--g600);animation:sp .8s linear infinite;flex:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+.pl{display:flex;align-items:center;gap:12px;padding:8px 0;font-weight:600;color:var(--muted)}
+.pl.on{color:var(--ink)} .pl.done{color:var(--g700)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--g900);color:#fff;padding:12px 18px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.25);z-index:60;max-width:90vw;font-weight:600}
+.pop{position:absolute;right:28px;top:62px;width:360px;max-width:92vw;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px rgba(10,60,40,.18);z-index:20;padding:10px}
+.pop a{display:block;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px}
+.pop a:hover{background:var(--g50)}
+.badge{position:absolute;top:-6px;right:-6px;background:var(--bad);color:#fff;border-radius:99px;font-size:11px;font-weight:800;padding:0 6px;min-width:18px;text-align:center}
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(160deg,var(--g50),#e6f4ee 60%,#d3eee1)}
+.login .box{max-width:880px;width:100%}
+.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:22px}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;cursor:pointer;text-align:left;transition:.15s;box-shadow:var(--sh)}
+.pcard:hover{border-color:var(--g500);transform:translateY(-2px)}
+.av{width:44px;height:44px;border-radius:50%;background:var(--g100);color:var(--g700);display:grid;place-items:center;font-weight:800;margin-bottom:12px}
+.mobtop{display:none}
+@media(max-width:960px){
+  .app{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:10px 14px}
+  .logo{padding:0}.nav{display:flex;gap:4px}.who{margin:0;padding:8px;width:100%}.who select{margin-top:4px}.top{flex-wrap:wrap}.top .grow{flex-basis:100%}.btn.lg{width:100%}
+  .cols,.help,.grid2{grid-template-columns:1fr}.content{padding:18px}.top{padding:12px 18px}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+/* ================= Dados e regras ================= */
+const CATS={MEDICAMENTOS_REFERENCIA:{n:'Medicamentos de referência',t:12},GENERICOS:{n:'Genéricos',t:15},MIP:{n:'MIP (isentos de prescrição)',t:18},HIGIENE_BELEZA:{n:'Higiene e beleza',t:20},DERMOCOSMETICOS:{n:'Dermocosméticos',t:20},SUPLEMENTOS:{n:'Suplementos',t:20}};
+const catN=k=>(CATS[k]||{n:k||'(sem categoria)'}).n;
+const LEVELS={coord:'Coordenação',ger:'Gerência',dir:'Diretoria',com:'Comitê'};
+const PERSONAS=[
+ {id:'rev',nome:'Ana Souza',papel:'Revisor comercial',level:null,desc:'Valida o que a IA não teve certeza, confirma recusas e trata erros do ERP.'},
+ {id:'coord',nome:'Bruno Lima',papel:'Coordenação',level:'coord',desc:'Aprova descontos até 10%.'},
+ {id:'ger',nome:'Carla Mendes',papel:'Gerência',level:'ger',desc:'Aprova descontos de 10% a 20% e verbas até R$ 5 mil.'},
+ {id:'dir',nome:'Diego Rocha',papel:'Diretoria',level:'dir',desc:'Aprova descontos de 20% a 25% e verbas de R$ 5 a 20 mil.'},
+ {id:'com',nome:'Comitê de verba',papel:'Comitê',level:'com',desc:'Aprova verbas acima de R$ 20 mil.'}
+];
+let SUPS={
+ S1:{nome:'Laboratório Vitalis S.A.',cnpj:'11.222.333/0001-44'},
+ S2:{nome:'Medfarma Indústria Farmacêutica Ltda',cnpj:'22.333.444/0001-55'},
+ S3:{nome:'BioNutri Suplementos Ltda',cnpj:'33.444.555/0001-66'},
+ S4:{nome:'DermaPure Cosméticos S.A.',cnpj:'44.555.666/0001-77'},
+ S5:{nome:'Genérica Brasil Ltda',cnpj:'55.666.777/0001-88'},
+ S6:{nome:'Vitalis Pharma Distribuidora Ltda',cnpj:'66.777.888/0001-99'}
+};
+/* ================= Conexão com o backend (Apps Script) =================
+   Sem API_URL a Mesa roda em modo demonstração (dados locais), exatamente como o protótipo.
+   Com API_URL, os casos vêm da planilha e as ações chamam o validador e o cadastro no SAP.
+   Também aceita ?api=<url>&token=<token> na primeira abertura (fica salvo neste navegador). */
+const CONFIG={API_URL:'',TOKEN:'',POLL_MS:8000};
+const CONN=(()=>{let o={api:CONFIG.API_URL,token:CONFIG.TOKEN};try{const q=new URLSearchParams(location.search);
+  if(q.get('api')){o={api:q.get('api'),token:q.get('token')||''};localStorage.setItem('cc_conn',JSON.stringify(o));history.replaceState(null,'',location.pathname+location.hash)}
+  else if(!o.api){const r=localStorage.getItem('cc_conn');if(r)o=JSON.parse(r)}}catch(e){}return o})();
+const LIVE=!!CONN.api;
+const REF={busy:false,err:null,last:null,sig:''};
+const day=86400000;
+const startOfDay=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
+const addDays=n=>{const d=startOfDay();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+const fmtD=s=>{if(!s)return '-';const[a,b,c]=s.split('-');return `${c}/${b}/${a}`};
+const brl=v=>'R$ '+Number(v).toLocaleString('pt-BR');
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const diffDays=(a,b)=>Math.round((new Date(b)-new Date(a))/day);
+const hhmm=iso=>new Date(iso).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+const ago=iso=>{const m=Math.round((Date.now()-new Date(iso))/60000);if(m<2)return 'agora';if(m<60)return m+' min';const h=Math.round(m/60);if(h<24)return h+' h';return Math.round(h/24)+' d'};
+const alcadaDesc=p=>p<=10?'coord':p<=20?'ger':p<=25?'dir':null;
+const alcadaVerba=v=>v<=5000?'ger':v<=20000?'dir':'com';
+/* condições já vigentes no ERP (usadas na checagem de sobreposição) */
+const ERP_VIGENTES=()=>[
+ {forn:'S5',cat:'HIGIENE_BELEZA',loja:'REDE',tipo:'DESC',ini:addDays(-60),fim:addDays(120)},
+ {forn:'S4',cat:'DERMOCOSMETICOS',loja:'REDE',tipo:'VERBA',ini:addDays(-30),fim:addDays(200)}
+];
+
+const SC={
+ limpo:{label:'Proposta clara',tag:'Segue direto',desc:'Tudo identificado com alta confiança. Vai direto para a aprovação da Gerência.',
+  make:()=>({assunto:'Proposta de desconto: genéricos',remetente:'comercial@medfarma.example',assina:'Renata Prado, Medfarma',fornTxt:'Medfarma Indústria Farmacêutica',cands:[{id:'S2',sim:98}],
+  itens:[{tipo:'DESC',cat:'GENERICOS',valor:12,ini:addDays(7),fim:addDays(187),loja:'REDE',conf:{cat:96,valor:99,ini:97,fim:97,loja:95}}]})},
+ ambiguo:{label:'E-mail ambíguo',tag:'Precisa de revisão',desc:'Fornecedor com nome parecido, categoria e loja vagas. A IA pede a sua conferência. Depois segue para Gerência e Diretoria.',
+  make:()=>({assunto:'Condições novembro, linha dermo + verba',remetente:'vendas@vitalispharma.example',assina:'Marcos, Vitalis Pharma',fornTxt:'Vitalis Pharma',cands:[{id:'S1',sim:91},{id:'S6',sim:88}],
+  itens:[{tipo:'DESC',cat:'DERMOCOSMETICOS',valor:18,ini:addDays(10),fim:addDays(190),loja:'REDE',catTxt:'linha dermo',lojaTxt:'lojas do sul e capitais',conf:{cat:62,valor:97,ini:94,fim:93,loja:55}},
+          {tipo:'VERBA',cat:'DERMOCOSMETICOS',valor:8000,ini:addDays(10),fim:addDays(100),loja:'REDE',catTxt:'a mesma linha',lojaTxt:'lojas do sul e capitais',conf:{cat:70,valor:96,ini:92,fim:92,loja:55}}]})},
+ semcad:{label:'Fornecedor sem cadastro',tag:'Recusa',desc:'Nenhum fornecedor parecido na base. Você confirma que não existe cadastro e a IA redige a recusa.',
+  make:()=>({assunto:'Parceria: proposta comercial',remetente:'contato@nutrivida.example',assina:'Paula, NutriVida',fornTxt:'NutriVida Brasil',cands:[{id:'S3',sim:41}],
+  itens:[{tipo:'DESC',cat:'SUPLEMENTOS',valor:15,ini:addDays(5),fim:addDays(185),loja:'REDE',conf:{cat:95,valor:98,ini:96,fim:96,loja:94}}]})},
+ teto:{label:'Desconto acima do teto',tag:'Recusa automática',desc:'Genéricos com 17% (teto 15%). As regras barram e a IA redige a recusa para você confirmar.',
+  make:()=>({assunto:'Desconto especial genéricos',remetente:'comercial@medfarma.example',assina:'Renata Prado, Medfarma',fornTxt:'Medfarma Indústria Farmacêutica',cands:[{id:'S2',sim:98}],
+  itens:[{tipo:'DESC',cat:'GENERICOS',valor:17,ini:addDays(7),fim:addDays(187),loja:'REDE',conf:{cat:96,valor:99,ini:97,fim:97,loja:95}}]})},
+ verba:{label:'Verba alta + desconto',tag:'Duas alçadas',desc:'Desconto de 8% (Coordenação) e verba de R$ 32 mil (Comitê). Aprovados separadamente.',
+  make:()=>({assunto:'Verba de exposição e desconto MIP',remetente:'trade@vitalis.example',assina:'Lúcia, Vitalis',fornTxt:'Laboratório Vitalis S.A.',cands:[{id:'S1',sim:99}],
+  itens:[{tipo:'DESC',cat:'MIP',valor:8,ini:addDays(6),fim:addDays(186),loja:'REDE',conf:{cat:95,valor:99,ini:96,fim:96,loja:95}},
+         {tipo:'VERBA',cat:'MIP',valor:32000,ini:addDays(6),fim:addDays(96),loja:'REDE',conf:{cat:94,valor:98,ini:96,fim:96,loja:95}}]})},
+ sobre:{label:'Vigência sobreposta',tag:'Recusa automática',desc:'Já existe desconto vigente do mesmo fornecedor, categoria e loja. As regras barram.',
+  make:()=>({assunto:'Renovação higiene e beleza',remetente:'comercial@genericabr.example',assina:'Thiago, Genérica Brasil',fornTxt:'Genérica Brasil Ltda',cands:[{id:'S5',sim:99}],
+  itens:[{tipo:'DESC',cat:'HIGIENE_BELEZA',valor:14,ini:addDays(20),fim:addDays(200),loja:'REDE',conf:{cat:95,valor:99,ini:96,fim:96,loja:95}}]})},
+ vig:{label:'Vigência fora do padrão',tag:'Recusa automática',desc:'Início no passado e prazo maior que 12 meses. Duas pré-condições falham.',
+  make:()=>({assunto:'Acordo anual suplementos',remetente:'comercial@bionutri.example',assina:'Fábio, BioNutri',fornTxt:'BioNutri Suplementos',cands:[{id:'S3',sim:97}],
+  itens:[{tipo:'DESC',cat:'SUPLEMENTOS',valor:10,ini:addDays(-12),fim:addDays(520),loja:'REDE',conf:{cat:96,valor:99,ini:95,fim:95,loja:95}}]})},
+ erp:{label:'Falha no SAP',tag:'Erro do ERP',desc:'Proposta clara, mas o SAP recusa a primeira gravação. Você reenvia, sem duplicar.',
+  make:()=>({assunto:'Desconto MIP campanha verão',remetente:'comercial@medfarma.example',assina:'Renata Prado, Medfarma',fornTxt:'Medfarma Indústria Farmacêutica',cands:[{id:'S2',sim:98}],erpFail:true,
+  itens:[{tipo:'DESC',cat:'MIP',valor:9,ini:addDays(8),fim:addDays(188),loja:'REDE',conf:{cat:96,valor:99,ini:97,fim:97,loja:95}}]})}
+};
+
+/* ================= Estado ================= */
+let S={cases:[],notifs:[],n:1037,persona:null};
+let UI={tab:null,route:'',busy:null,modal:null,toast:null,pop:false,recusando:{},drafts:{},val1:{},openOk:{}};
+const save=()=>{try{localStorage.setItem(LIVE?'cc_live_v1':'cc_proto_v1',JSON.stringify(LIVE?{persona:S.persona,lidas:S.lidas||{}}:S))}catch(e){}};
+const load=()=>{try{const r=localStorage.getItem(LIVE?'cc_live_v1':'cc_proto_v1');if(r){const o=JSON.parse(r);if(LIVE){S.persona=o.persona||null;S.lidas=o.lidas||{}}else S=o;return true}}catch(e){}return false};
+const nowIso=()=>new Date().toISOString();
+const getCase=id=>S.cases.find(c=>c.id===id);
+const persona=()=>PERSONAS.find(p=>p.id===S.persona);
+function log(c,quem,tipo,txt,minsAgo=0){c.log.push({t:new Date(Date.now()-minsAgo*60000).toISOString(),quem,tipo,txt})}
+function notify(level,c,txt){S.notifs.unshift({id:Math.random().toString(36).slice(2),level,caseId:c.id,txt,lida:false,t:nowIso()})}
+
+/* ================= Modo conectado ================= */
+const apiUrl=r=>`${CONN.api}${CONN.api.includes('?')?'&':'?'}token=${encodeURIComponent(CONN.token)}&rota=${r}`;
+async function apiGet(r){const x=await fetch(apiUrl(r));return x.json()}
+async function apiAcao(body){const x=await fetch(apiUrl('acao'),{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});return x.json()}
+function deriveNotifs(){
+  const lidas=S.lidas||{},out=[];
+  S.cases.forEach(c=>{
+    if(c.stage==='val1')out.push({id:c.id+':v1',level:'rev',caseId:c.id,txt:`Caso ${c.id} precisa da sua validação.`,t:c.recebido});
+    c.itens.forEach((it,i)=>{
+      if(it.status==='recusa_pendente')out.push({id:c.id+':r'+i,level:'rev',caseId:c.id,txt:`Caso ${c.id}: há texto de recusa para você confirmar.`,t:c.recebido});
+      if(it.status==='erro_erp')out.push({id:c.id+':e'+i,level:'rev',caseId:c.id,txt:`Caso ${c.id}: erro ao gravar no SAP. Precisa da sua ação.`,t:c.recebido});
+      if(it.status==='aguardando')out.push({id:c.id+':a'+i+':'+(it.sig||''),level:it.alcada,caseId:c.id,txt:`Caso ${c.id}: ${it.tipo==='DESC'?'desconto de '+it.valor+'%':'verba de '+brl(it.valor)} aguarda a sua decisão.`,t:c.recebido});
+    });
+  });
+  S.notifs=out.map(n=>({...n,lida:!!lidas[n.id]}));
+}
+const editando=()=>{const a=document.activeElement;return !!a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&!!a.closest('#root')};
+async function refresh(manual){
+  if(REF.busy)return;REF.busy=true;
+  try{const d=await apiGet('casos');if(d.error)throw new Error(d.error==='nao autorizado'?'token não aceito pelo servidor':d.error);
+    const sig=JSON.stringify(d.casos),first=!REF.last,hadErr=!!REF.err;
+    SUPS=d.sups;S.cases=d.casos;deriveNotifs();REF.err=null;REF.last=Date.now();
+    if((manual||first||hadErr||sig!==REF.sig)&&(manual||!editando())){REF.sig=sig;render()}}
+  catch(e){const was=REF.err;REF.err=String(e.message||e);if(was!==REF.err)render()}
+  REF.busy=false;
+}
+function liveBanner(){
+  if(REF.err)return `<div class="note bad" style="margin-bottom:16px">${ico('alert')}<div><b>Sem conexão com o servidor.</b><div class="small">${esc(REF.err)}. Tentando de novo a cada ${CONFIG.POLL_MS/1000} s.</div></div></div>`;
+  if(!REF.last)return `<div class="note info" style="margin-bottom:16px">${ico('clock')}<div>Carregando os casos...</div></div>`;
+  return '';
+}
+async function liveAct(d){
+  const p=persona();const c=getCase(d.id);const key=c.id+':'+d.i;
+  let body={persona:p.id,id:c.id,i:d.i!=null?+d.i:undefined},title='Enviando';
+  if(d.act==='val1ok'){const V=UI.val1[c.id];
+    body.acao='val1';body.fornId=V.forn==='none'?null:V.forn;body.edits=[...document.querySelectorAll('[data-fi]')].map(el=>({i:+el.dataset.fi,p:el.dataset.fp,v:el.value}));title='Rodando as regras'}
+  else if(d.act==='approve'){body.acao='approve';const sb=document.getElementById('subst_'+d.i);body.substituir=!!(sb&&sb.checked);title='Aprovando e cadastrando no SAP'}
+  else if(d.act==='rejok'){const t=document.getElementById('rj_'+d.i);const v=t.value.trim();
+    if(v.length<5){t.style.borderColor='var(--bad)';t.placeholder='Escreva o motivo para continuar.';t.focus();return}
+    body.acao='reject';body.just=v;title='Registrando a recusa'}
+  else if(d.act==='sendrec'){const t=document.getElementById('rt_'+d.i).value.trim();if(!t)return;body.acao='sendrec';body.text=t;title='Confirmando a recusa'}
+  else if(d.act==='retry'){body.acao='retry';title='Reenviando ao SAP'}
+  UI.busy={title,steps:['Aguardando o servidor'],at:0};render();
+  let msg;
+  try{const r=await apiAcao(body);
+    if(!r.ok)msg='Não foi possível: '+(r.erro||r.error||'erro desconhecido');
+    else{const i=S.cases.findIndex(x=>x.id===r.caso.id);if(i>=0)S.cases[i]=r.caso;else S.cases.unshift(r.caso);deriveNotifs();
+      const it=body.i!=null?r.caso.itens[body.i]:null;
+      if(d.act==='val1ok'){delete UI.val1[c.id];msg='Validação concluída.'}
+      else if(d.act==='rejok'){delete UI.recusando[key];msg='Recusa registrada. O texto está com o revisor.'}
+      else if(d.act==='sendrec'){delete UI.drafts[key];msg='Recusa confirmada.'}
+      else if(it){msg=it.status==='concluido'?`Cadastrada no SAP (${it.sap}).`:it.status==='erro_erp'?'O SAP falhou. A condição segue aprovada e a pendência está com o revisor.':it.status==='aguardando'?'O SAP mudou desde a análise. A condição voltou para reaprovação.':it.status==='recusa_pendente'?'A condição deixou de atender a política e não foi enviada.':'Pronto.'}}
+  }catch(e){msg='Falha de rede ao falar com o servidor. Nada foi alterado; tente de novo.'}
+  UI.busy=null;save();toast(msg);refresh();
+}
+
+/* ================= Motor (agentes, regras, aprovação) ================= */
+function bodyHtml(c){
+  let h=`<p>Olá, time comercial,</p><p>Segue a proposta para o próximo ciclo, em nome da <mark data-ev="forn">${esc(c.fornTxt)}</mark>.</p>`;
+  c.itens.forEach((it,i)=>{
+    const catTxt=it.catTxt||catN(it.cat).toLowerCase(), lojaTxt=it.lojaTxt||(it.loja==='REDE'?'em toda a rede':it.loja);
+    const val=it.tipo==='DESC'?`${it.valor}%`:brl(it.valor);
+    h+=`<p>• ${it.tipo==='DESC'?'Desconto':'Verba de exposição'} de <mark data-ev="i${i}_valor">${val}</mark> para <mark data-ev="i${i}_cat">${esc(catTxt)}</mark>, <mark data-ev="i${i}_loja">${esc(lojaTxt)}</mark>, de <mark data-ev="i${i}_ini">${fmtD(it.ini)}</mark> até <mark data-ev="i${i}_fim">${fmtD(it.fim)}</mark>.</p>`;
+  });
+  return h+`<p>Qualquer dúvida, estou à disposição.</p><p>Att,<br>${esc(c.assina)}</p>`;
+}
+function newCase(key,minsAgo=0){
+  const sc=SC[key].make(); S.n++;
+  const c={id:'C-'+S.n,key,assunto:sc.assunto,remetente:sc.remetente,assina:sc.assina,fornTxt:sc.fornTxt,cands:sc.cands,fornId:null,itens:sc.itens.map(it=>({...it,status:'novo',orig:{cat:it.cat,valor:it.valor,ini:it.ini,fim:it.fim,loja:it.loja}})),
+    erpFail:!!sc.erpFail,erpTried:false,stage:'val1',skippedReview:false,recebido:new Date(Date.now()-minsAgo*60000).toISOString(),log:[],resposta:null};
+  c.body=bodyHtml(c);
+  log(c,'Porta de entrada','auto',`E-mail recebido de ${c.remetente} e caso ${c.id} aberto.`,minsAgo);
+  log(c,'Agente Extrator','ia',`Leu o e-mail e extraiu ${c.itens.length} condição(ões), com confiança e evidência por campo.`,minsAgo);
+  const best=c.cands[0]; const second=c.cands[1];
+  const supOk=best&&best.sim>=95&&(!second||best.sim-second.sim>=10);
+  log(c,'Conciliador','auto',supOk?`Fornecedor encontrado: ${SUPS[best.id].nome} (${best.sim}% de similaridade).`:(best&&best.sim>=60?`Encontrou ${c.cands.length} fornecedores parecidos e não conseguiu decidir sozinho.`:'Não encontrou fornecedor parecido na base.'),minsAgo);
+  const low=c.itens.some(it=>Object.values(it.conf).some(v=>v<80));
+  if(supOk&&!low){c.fornId=best.id;c.skippedReview=true;log(c,'Revisão','auto','Confiança alta em todos os campos. Revisão humana dispensada.',minsAgo);runRules(c)}
+  else{c.stage='val1';log(c,'Revisão','auto','Há campos ou fornecedor com baixa confiança. Enviado para validação do revisor.',minsAgo);notify('rev',c,`Caso ${c.id} precisa da sua validação.`)}
+  S.cases.unshift(c);return c;
+}
+function motivoText(c,it,r){
+  const forn=c.fornId?SUPS[c.fornId].nome:c.fornTxt;
+  return ({
+    cadastro:`Não localizamos cadastro ativo de "${c.fornTxt}" em nossa base. Para seguir com a proposta, pedimos o envio dos dados cadastrais (CNPJ, razão social e contato). Assim que o cadastro for concluído, retomamos a análise.`,
+    vigencia:`A vigência proposta (${Math.round(diffDays(it.ini,it.fim)/30)} meses) ultrapassa o limite de 12 meses. Podemos avaliar uma nova proposta com vigência de até 12 meses.`,
+    retro:`A vigência proposta começa em ${fmtD(it.ini)}, antes da data de hoje. A condição não pode ser retroativa. Pedimos uma nova data de início.`,
+    sobre:`Já existe ${it.tipo==='DESC'?'desconto':'verba'} vigente de ${forn} para esta categoria e loja${r.ate?` até ${fmtD(r.ate)}`:''}. Não é possível sobrepor vigências. Podemos avaliar a nova condição a partir do fim da vigência atual.`,
+    teto:`O desconto de ${it.valor}% proposto para ${catN(it.cat)} excede o teto de ${CATS[it.cat].t}% definido para a categoria. Podemos avaliar uma nova proposta com percentual de até ${CATS[it.cat].t}%.`,
+    acima25:`Descontos acima de 25% não são aceitos pela política comercial.`
+  })[r.id];
+}
+function runRules(c){
+  c.stage='andamento';
+  c.itens.forEach((it,i)=>{
+    const checks=[]; const sup=c.fornId;
+    checks.push({id:'cadastro',nome:'Fornecedor com cadastro ativo',ok:!!sup,det:sup?SUPS[sup].nome:'Sem cadastro na base'});
+    if(sup){
+      const meses=diffDays(it.ini,it.fim)/30.4;
+      checks.push({id:'vigencia',nome:'Vigência de até 12 meses',ok:diffDays(it.ini,it.fim)<=366,det:`${fmtD(it.ini)} a ${fmtD(it.fim)} (${Math.round(meses)} meses)`});
+      checks.push({id:'retro',nome:'Vigência não retroativa',ok:it.ini>=addDays(0),det:`Início em ${fmtD(it.ini)}`});
+      const hit=ERP_VIGENTES().find(v=>v.forn===sup&&v.cat===it.cat&&v.tipo===it.tipo&&(v.loja===it.loja||v.loja==='REDE'||it.loja==='REDE')&&v.ini<=it.fim&&it.ini<=v.fim);
+      checks.push({id:'sobre',nome:'Sem sobrepor fornecedor, categoria e loja',ok:!hit,det:hit?`Já existe vigente até ${fmtD(hit.fim)}`:'Nenhuma vigência conflitante no ERP',ate:hit&&hit.fim});
+      if(it.tipo==='DESC'){
+        checks.push({id:'teto',nome:`Desconto dentro do teto da categoria (${CATS[it.cat].t}%)`,ok:it.valor<=CATS[it.cat].t,det:`${it.valor}% proposto`});
+        if(it.valor>25)checks.push({id:'acima25',nome:'Desconto até 25%',ok:false,det:`${it.valor}%`});
+      }
+    }
+    it.checks=checks;
+    const falhas=checks.filter(x=>!x.ok);
+    if(falhas.length){
+      it.status='recusa_pendente';it.motivos=falhas.map(f=>f.id);
+      it.draft=falhas.map(f=>motivoText(c,it,f)).join('\n\n');
+      log(c,'Regras','auto',`${it.tipo==='DESC'?'Desconto':'Verba'} ${i+1}: ${falhas.length} regra(s) não atendida(s).`);
+      log(c,'Agente Recusa','ia',`Redigiu o texto de recusa da condição ${i+1} com base na regra.`);
+    }else{
+      it.alcada=it.tipo==='DESC'?alcadaDesc(it.valor):alcadaVerba(it.valor);
+      it.status='aguardando';
+      log(c,'Regras','auto',`${it.tipo==='DESC'?'Desconto':'Verba'} ${i+1}: todas as regras atendidas.`);
+      log(c,'Roteamento','auto',`Condição ${i+1} roteada para ${LEVELS[it.alcada]} (${it.tipo==='DESC'?it.valor+'%':brl(it.valor)}). Aviso enviado com link.`);
+      notify(it.alcada,c,`Caso ${c.id}: ${it.tipo==='DESC'?'desconto de '+it.valor+'%':'verba de '+brl(it.valor)} aguarda a sua decisão.`);
+    }
+  });
+  if(c.itens.some(x=>x.status==='recusa_pendente'))notify('rev',c,`Caso ${c.id}: há texto de recusa para você confirmar.`);
+  checkDone(c);
+}
+function confirmVal1(c,data){
+  c.fornId=data.fornId;
+  data.edits.forEach(e=>{const it=c.itens[e.i];it[e.p]=e.p==='valor'?Number(e.v):e.v});
+  log(c,S.persona&&persona().nome,'hum',`Validou os campos e escolheu o fornecedor: ${c.fornId?SUPS[c.fornId].nome:'sem cadastro'}.`);
+  runRules(c);
+}
+function approve(c,i){
+  const it=c.itens[i];log(c,persona().nome+' ('+persona().papel+')','hum',`Aprovou ${it.tipo==='DESC'?'o desconto':'a verba'} da condição ${i+1}.`);
+  sendSap(c,i);
+}
+function reject(c,i,just){
+  const it=c.itens[i];it.status='recusa_pendente';it.motivos=['decisao'];
+  log(c,persona().nome+' ('+persona().papel+')','hum',`Recusou a condição ${i+1}. Justificativa: ${just}`);
+  it.draft=`Após análise pela ${LEVELS[persona().level]}, a condição de ${it.tipo==='DESC'?'desconto de '+it.valor+'%':'verba de '+brl(it.valor)} para ${catN(it.cat)} não foi aprovada.\n\nMotivo: ${just}\n\nFicamos à disposição para avaliar uma nova proposta.`;
+  log(c,'Agente Recusa','ia',`Redigiu o texto de recusa com base na decisão da ${LEVELS[persona().level]}.`);
+  notify('rev',c,`Caso ${c.id}: há texto de recusa para você confirmar.`);
+  checkDone(c);
+}
+function sendSap(c,i){
+  const it=c.itens[i];
+  if(c.erpFail&&!c.erpTried){c.erpTried=true;it.status='erro_erp';it.erro='SAP retornou: ERRO 4012, período de vigência bloqueado para escrita (timeout de lock).';
+    log(c,'SAP','erp',`Falha ao cadastrar a condição ${i+1}. Pendência aberta para o revisor.`);notify('rev',c,`Caso ${c.id}: erro ao gravar no SAP. Precisa da sua ação.`);return}
+  it.status='concluido';it.sap='COND-'+(700000+Math.floor(Math.random()*99999));
+  log(c,'SAP','erp',`Condição ${i+1} cadastrada (${it.sap}). Reenvios não duplicam.`);
+  checkDone(c);
+}
+function retrySap(c,i){log(c,persona().nome,'hum',`Reenviou a condição ${i+1} ao SAP.`);sendSap(c,i)}
+function sendRecusa(c,i,text){
+  const it=c.itens[i];it.status='recusa_enviada';it.recusaTexto=text;
+  log(c,persona().nome,'hum',`Confirmou e enviou a recusa da condição ${i+1} ao fornecedor.`);checkDone(c);
+}
+function checkDone(c){
+  if(c.stage==='fim')return;
+  if(c.itens.every(it=>['concluido','recusa_enviada'].includes(it.status))){
+    c.stage='fim';
+    const ok=c.itens.filter(i=>i.status==='concluido'),no=c.itens.filter(i=>i.status==='recusa_enviada');
+    c.resposta={ok,no,t:nowIso()};
+    log(c,'Log e aviso','auto','Histórico gravado e resposta enviada ao fornecedor.');
+  }
+}
+
+/* ================= Helpers de UI ================= */
+const IC={
+ mail:'<path d="M3 6h18v12H3z"/><path d="m3 7 9 6 9-6"/>',check:'<path d="m5 12 5 5 9-10"/>',x:'<path d="M6 6l12 12M18 6 6 18"/>',alert:'<path d="M12 4 2.5 20h19z"/><path d="M12 10v4M12 17.5v.01"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',bell:'<path d="M6 17V11a6 6 0 1 1 12 0v6l1.5 2h-15z"/><path d="M10 21h4"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',shield:'<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',refresh:'<path d="M20 11a8 8 0 0 0-14-4L4 9"/><path d="M4 4v5h5"/><path d="M4 13a8 8 0 0 0 14 4l2-2"/><path d="M20 20v-5h-5"/>',
+ list:'<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',book:'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/>',
+ bot:'<rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 8V4M9 13h.01M15 13h.01M9 16.5h6"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/>',
+ send:'<path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'
+};
+const ico=n=>`<svg class="i" viewBox="0 0 24 24">${IC[n]||''}</svg>`;
+const chip=(t,k='')=>`<span class="chip ${k}">${t}</span>`;
+const cross=`<svg width="22" height="22" viewBox="0 0 24 24"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z" fill="#fff"/></svg>`;
+const actorChip={ia:chip(ico('bot')+' IA','ia'),auto:chip(ico('gear')+' Automático','auto'),hum:chip(ico('user')+' Você decide','hum')};
+const itemLabel=it=>it.tipo==='DESC'?`Desconto ${it.valor}%`:`Verba ${brl(it.valor)}`;
+const itemChipHtml=it=>chip(`${itemLabel(it)} · ${catN(it.cat)}`,it.tipo==='DESC'?'':'gray');
+
+/* tarefas pendentes por persona */
+function tasks(c,p){
+  const t=[];
+  if(p.id==='rev'){
+    if(c.stage==='val1')t.push('Validar campos');
+    c.itens.forEach(it=>{if(it.status==='recusa_pendente')t.push('Confirmar recusa');if(it.status==='erro_erp')t.push('Tratar erro do ERP')});
+  }else c.itens.forEach(it=>{if(it.status==='aguardando'&&it.alcada===p.level)t.push('Aprovar')});
+  return [...new Set(t)];
+}
+function stageInfo(c){
+  if(c.stage==='fim')return {txt:'Concluído',k:'auto'};
+  if(c.stage==='val1')return {txt:'Aguardando revisor',k:'hum'};
+  if(c.itens.some(i=>i.status==='erro_erp'))return {txt:'Erro do ERP',k:'bad'};
+  if(c.itens.some(i=>i.status==='recusa_pendente'))return {txt:'Recusa a confirmar',k:'warn'};
+  const lv=[...new Set(c.itens.filter(i=>i.status==='aguardando').map(i=>LEVELS[i.alcada]))];
+  return {txt:'Aguardando '+lv.join(' e '),k:'hum'};
+}
+function stepState(c){
+  const done=c.stage==='fim';
+  let cur;
+  if(done)cur=7;else if(c.stage==='val1')cur=2;
+  else if(c.itens.some(i=>['erro_erp'].includes(i.status))||c.itens.every(i=>['concluido','recusa_enviada','erro_erp'].includes(i.status)))cur=5;
+  else cur=4;
+  return cur;
+}
+
+/* ================= Telas ================= */
+function viewLogin(){
+  return `<div class="login"><div class="box">
+   <div class="row" style="gap:14px"><div class="logo" style="padding:0"><div class="mark" style="width:52px;height:52px;border-radius:15px">${cross}</div></div>
+   <div><h1>Central de Condições Comerciais</h1><div class="muted">Cadastro de condições de fornecedores, com a IA lendo e você decidindo.</div></div></div>
+   <div class="card" style="margin-top:26px"><h2>Quem é você hoje?</h2><div class="muted small">${LIVE?'Escolha o seu perfil.':'Protótipo de demonstração. Escolha um perfil para ver a aplicação pelos olhos dele.'} Você pode trocar de perfil a qualquer momento.</div>
+   <div class="pg">${PERSONAS.map(p=>`<button class="pcard" data-act="login" data-id="${p.id}"><div class="av">${p.nome.split(' ').map(x=>x[0]).slice(0,2).join('')}</div><h3>${p.nome}</h3><div class="chip ${p.id==='rev'?'hum':''}" style="margin:6px 0 8px">${p.papel}</div><div class="small muted">${p.desc}</div></button>`).join('')}</div></div>
+   <div class="small muted" style="margin-top:14px">${LIVE?'Conectado ao servidor: os casos chegam pelo e-mail do fornecedor. Comece como <b>Ana Souza</b> para validar o que a IA não teve certeza.':'Dica: comece como <b>Ana Souza</b> e use "Simular e-mail do fornecedor" para criar um caso.'}</div>
+  </div></div>`;
+}
+function shell(inner,title){
+  const p=persona();const mine=S.cases.filter(c=>tasks(c,p).length).length;
+  const nn=S.notifs.filter(n=>!n.lida&&(n.level===(p.id==='rev'?'rev':p.level))).length;
+  return `<div class="app"><aside class="side">
+   <div class="logo"><div class="mark">${cross}</div><div><b>Central de Condições</b><span>Comercial · Fornecedores</span></div></div>
+   <nav class="nav"><a class="${UI.route.startsWith('#/casos')||UI.route.startsWith('#/caso/')?'on':''}" data-go="#/casos">${ico('list')} Meus casos ${mine?`<span class="count">${mine}</span>`:''}</a>
+   <a class="${UI.route==='#/regras'?'on':''}" data-go="#/regras">${ico('book')} Regras vigentes</a></nav>
+   <div class="who"><div class="xs muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.06em">Você está como</div><div style="font-weight:800;color:var(--ink)">${p.nome}</div><div class="small muted">${p.papel}</div>
+   <select data-act="switch">${PERSONAS.map(x=>`<option value="${x.id}" ${x.id===p.id?'selected':''}>${x.nome}, ${x.papel}</option>`).join('')}</select>
+   ${LIVE?`<button class="btn ghost small" style="margin-top:6px;width:100%;color:var(--muted)" data-act="refresh">${ico('refresh')} Atualizar agora</button><div class="xs muted" style="margin-top:4px">${REF.err?'Sem conexão':REF.last?'Conectado · atualizado '+hhmm(new Date(REF.last).toISOString()):'Conectando...'}</div>`:`<button class="btn ghost small" style="margin-top:6px;width:100%;color:var(--muted)" data-act="reset">${ico('refresh')} Reiniciar demonstração</button>`}</div></aside>
+  <div class="main"><div class="top"><div class="grow"><div class="xs muted">${title[0]}</div><h2 style="font-size:20px">${title[1]}</h2></div>
+   ${LIVE?'':`<button class="btn pri" data-act="sim">${ico('mail')} Simular e-mail do fornecedor</button>`}
+   <div style="position:relative"><button class="btn" data-act="bell" aria-label="Notificações">${ico('bell')}</button>${nn?`<span class="badge">${nn}</span>`:''}
+   ${UI.pop?popHtml():''}</div></div>
+   <div class="content">${LIVE?liveBanner():''}${inner}</div></div></div>`;
+}
+function popHtml(){
+  const p=persona();const key=p.id==='rev'?'rev':p.level;const l=S.notifs.filter(n=>n.level===key).slice(0,6);
+  return `<div class="pop"><div style="padding:6px 12px 8px" class="row between"><h3>Mensagens para você</h3><span class="xs muted">com link direto</span></div>
+   ${l.length?l.map(n=>`<a data-go="#/caso/${n.caseId}" data-act="read" data-id="${n.id}"><div class="row between"><b style="color:var(--ink)">${n.txt}</b>${n.lida?'':'<span class="chip">nova</span>'}</div><div class="xs muted">${ago(n.t)} atrás · Abrir caso ${ico('arrow')}</div></a>`).join(''):'<div class="muted small" style="padding:14px">Nenhuma mensagem por enquanto.</div>'}</div>`;
+}
+function viewQueue(){
+  const p=persona();
+  const mineL=S.cases.filter(c=>tasks(c,p).length);
+  const prog=S.cases.filter(c=>c.stage!=='fim'&&!tasks(c,p).length);
+  const done=S.cases.filter(c=>c.stage==='fim');
+  const tabs=[['mine','Para mim',mineL],['prog','Em andamento',prog],['done','Concluídos',done],['all','Todos',S.cases]];
+  if(!UI.tab)UI.tab=mineL.length?'mine':'all';
+  const list=tabs.find(t=>t[0]===UI.tab)[2];
+  const first=!mineL.length?`<div class="card flat" style="text-align:center;padding:36px"><div style="font-size:34px">🎉</div><h2>Nada esperando por você</h2><div class="muted" style="margin:6px 0 16px">Quando um novo e-mail chegar e precisar da sua decisão, ele aparece aqui.</div>${LIVE?'':`<button class="btn pri" data-act="sim">${ico('mail')} Simular e-mail do fornecedor</button>`}</div>`:'';
+  return shell(`
+   <div class="card"><h2>Como funciona</h2><div class="help" style="margin-top:12px">
+     <div><b><span class="n">1</span> A IA lê o e-mail</b>Extrai os campos e procura o fornecedor. Só pede ajuda quando não tem certeza.</div>
+     <div><b><span class="n">2</span> As regras conferem</b>Teto da categoria, vigência e sobreposição são checados automaticamente.</div>
+     <div><b><span class="n">3</span> Você decide</b>Nada vai para o SAP sem uma pessoa responder por aquilo.</div></div></div>
+   <div class="tabs">${tabs.map(t=>`<button class="tab ${UI.tab===t[0]?'on':''}" data-act="tab" data-id="${t[0]}">${t[1]}<small>${t[2].length}</small></button>`).join('')}</div>
+   <div class="col">${list.length?list.map(c=>caseRow(c,p)).join(''):(UI.tab==='mine'?first:'<div class="muted card flat">Nenhum caso nesta lista.</div>')}</div>`,['Casos','Meus casos']);
+}
+function caseRow(c,p){
+  const t=tasks(c,p),si=stageInfo(c);
+  return `<div class="card case" data-go="#/caso/${c.id}"><div><div class="row wrap"><b style="color:var(--ink);font-size:16px">${c.id}</b><span class="muted">·</span><b style="color:var(--ink)">${esc(c.fornId?SUPS[c.fornId].nome:c.fornTxt)}</b>${chip(si.txt,si.k)}</div>
+   <div class="small muted" style="margin-top:2px">${esc(c.assunto)} · recebido há ${ago(c.recebido)}</div><div class="items">${c.itens.map(itemChipHtml).join('')}</div></div>
+   <div>${t.length?`<button class="btn pri">${t[0]} ${ico('arrow')}</button>`:`<button class="btn">${ico('eye')} Ver caso</button>`}</div></div>`;
+}
+function stepper(c){
+  const cur=stepState(c);
+  const S0=[['Recebido','auto'],['Extração','ia'],['Revisão','hum'],['Regras','auto'],['Decisão','hum'],['SAP','auto'],['Resposta','auto']];
+  const tx={ia:'IA',auto:'Automático',hum:'Humano'};
+  return `<div class="steps">${S0.map((s,i)=>{
+    let cls=i<cur?'done':i===cur?'cur':'';
+    if(i===2&&c.skippedReview)cls='skip';
+    return `<div class="step ${cls}"><div class="dot">${cls==='done'||(cls==='skip')?ico('check'):i+1}</div>${s[0]}<small class="${s[1]}">${i===2&&c.skippedReview?'Dispensada':tx[s[1]]}</small></div>`}).join('')}</div>`;
+}
+function viewCase(id){
+  const c=getCase(id);const p=persona();
+  if(!c)return shell('<div class="card">Caso não encontrado.</div>',['Casos','Caso']);
+  const si=stageInfo(c);
+  const main=c.stage==='val1'?val1View(c,p):itemsView(c,p);
+  return shell(`
+   <div class="row between wrap"><button class="btn ghost" data-go="#/casos">${ico('back')} Voltar para a lista</button>
+    <div class="row">${chip(si.txt,si.k)}<span class="small muted">Recebido há ${ago(c.recebido)}</span></div></div>
+   <div class="card" style="margin-top:12px;padding:6px 20px 8px"><div class="row between wrap" style="margin-top:12px"><div><h1>${c.id} · ${esc(c.fornId?SUPS[c.fornId].nome:c.fornTxt)}</h1><div class="muted">${esc(c.assunto)}</div></div></div>${stepper(c)}</div>
+   <div class="cols ${c.stage==='val1'&&p.id==='rev'?'one':''}" style="margin-top:20px"><div class="col" style="gap:18px">${main}${c.resposta?respostaView(c):''}</div>
+   <div class="col"><div class="card"><h3>Resumo</h3><div class="col small" style="gap:8px;margin-top:10px">
+     <div><span class="muted">Remetente</span><br>${esc(c.remetente)}</div>
+     <div><span class="muted">Fornecedor na base</span><br>${c.fornId?`${esc(SUPS[c.fornId].nome)}<br><span class="muted">CNPJ ${SUPS[c.fornId].cnpj}</span>`:(c.stage==='val1'?'<span class="muted">Aguardando sua confirmação</span>':'<b style="color:var(--bad)">Sem cadastro</b>')}</div>
+     <div><span class="muted">Condições</span><br>${c.itens.map(itemChipHtml).join(' ')}</div></div>
+     <details style="margin-top:12px"><summary class="small" style="cursor:pointer;font-weight:700;color:var(--g700)">Ver e-mail original</summary><div class="mail" style="margin-top:10px">${c.body}</div></details></div>
+    <div class="card"><h3>Histórico (auditoria)</h3><div class="xs muted" style="margin-bottom:12px">Quem fez o quê e quando</div><ol class="tl">${c.log.map(l=>`<li class="${l.tipo}"><b>${esc(l.quem)}</b> ${esc(l.txt)}<time>${hhmm(l.t)}</time></li>`).join('')}</ol></div></div></div>`,['Casos',c.id]);
+}
+/* ---- Validação 1 ---- */
+function val1View(c,p){
+  const isRev=p.id==='rev';
+  if(!isRev)return `<div class="card"><div class="note info">${ico('clock')}<div><b>Aguardando a revisão da Ana.</b><br>A IA não teve certeza de alguns campos. Depois da validação, as regras rodam e a condição chega para a alçada certa.</div></div><div class="act"><button class="btn" data-act="sw" data-id="rev">Ver como Ana Souza ${ico('arrow')}</button></div></div>`;
+  const V=UI.val1[c.id]||(UI.val1[c.id]={forn:c.cands[0]&&c.cands[0].sim>=60?c.cands[0].id:'none',ok:{},ed:{}});V.ed=V.ed||{};
+  const lowList=[];
+  const campos=c.itens.map((it,i)=>{
+    const rows=[['cat','Categoria',it.cat,it.conf.cat],['valor',it.tipo==='DESC'?'Desconto (%)':'Verba (R$)',it.valor,it.conf.valor],['ini','Início da vigência',it.ini,it.conf.ini],['fim','Fim da vigência',it.fim,it.conf.fim],['loja','Loja',it.loja,it.conf.loja]];
+    rows.forEach(r=>{if(r[3]<80)lowList.push(`${i}_${r[0]}`)});
+    return {it,i,rows};
+  });
+  const fieldHtml=(i,r)=>{
+    const [p_,lab,val0,cf]=r;const low=cf<80;const k=`${i}_${p_}`;const val=V.ed[k]!==undefined?V.ed[k]:val0;const ev=`i${i}_${p_==='cat'?'cat':p_==='valor'?'valor':p_==='ini'?'ini':p_==='fim'?'fim':'loja'}`;
+    let inp;
+    if(p_==='cat')inp=`<select data-fi="${i}" data-fp="cat" data-ev="${ev}">${val===''?'<option value="" selected>Escolher...</option>':''}${Object.entries(CATS).map(([k2,v])=>`<option value="${k2}" ${k2===val?'selected':''}>${v.n}</option>`).join('')}</select>`;
+    else if(p_==='valor')inp=`<input type="number" data-fi="${i}" data-fp="valor" data-ev="${ev}" value="${val}">`;
+    else if(p_==='ini'||p_==='fim')inp=`<input type="date" data-fi="${i}" data-fp="${p_}" data-ev="${ev}" value="${val}">`;
+    else inp=`<input type="text" data-fi="${i}" data-fp="loja" data-ev="${ev}" value="${esc(val)}">`;
+    return `<div class="field ${low?'low':'ok'}"><div class="row between"><label class="l" style="margin:0" title="Passe o mouse ou foque no campo para ver o trecho do e-mail">${lab}</label><span class="conf ${low?'lo':'hi'}">${low?'IA em dúvida · ':''}${cf}%</span></div><div style="margin-top:6px">${inp}</div>
+     ${low?`<label class="row small" style="margin-top:8px;cursor:pointer"><input type="checkbox" data-lowok="${k}" ${V.ok[k]?'checked':''}> <b>Confere</b> </label>`:''}</div>`;
+  };
+  const cands=c.cands.filter(x=>x.sim>=60);
+  const nLow=lowList.length;
+  return `<div class="card"><div class="row between wrap"><div><h2>Validação 1: confira o que a IA entendeu</h2><div class="muted small">Só os campos com <span style="color:var(--warn);font-weight:700">baixa confiança</span> precisam do seu ok. Os demais já estão confiáveis.</div></div>${actorChip.hum}</div>
+   ${(c.revisao&&c.revisao.length)?`<div class="note warn" style="margin-top:14px">${ico('alert')}<div><b>O validador pediu a sua conferência:</b><ul style="margin:6px 0 0 18px">${c.revisao.map(r=>`<li>${esc(r.mensagem)}</li>`).join('')}</ul></div></div>`:''}
+   <div class="cols" style="grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);margin-top:16px;gap:18px">
+    <div><label class="l">E-mail original</label><div class="mail"><div class="hd"><b style="color:var(--ink)">${esc(c.assunto)}</b><div class="small muted">De: ${esc(c.remetente)}</div></div>${c.body}</div></div>
+    <div class="col" style="gap:16px">
+     <div><label class="l">1. Qual é o fornecedor?</label><div class="col" style="gap:8px">
+      ${cands.map(x=>`<label class="cand ${V.forn===x.id?'sel':''}"><input type="radio" name="forn" value="${x.id}" data-ev="forn" ${V.forn===x.id?'checked':''}><div class="grow"><b style="color:var(--ink)">${SUPS[x.id].nome}</b><div class="xs muted">CNPJ ${SUPS[x.id].cnpj}</div></div><div style="text-align:right"><div class="bar"><i style="width:${x.sim}%"></i></div><div class="xs muted">${x.sim}% parecido</div></div></label>`).join('')}
+      <label class="cand ${V.forn==='none'?'sel':''}"><input type="radio" name="forn" value="none" ${V.forn==='none'?'checked':''}><div class="grow"><b style="color:var(--ink)">Nenhum deles / sem cadastro</b><div class="xs muted">A proposta será recusada com pedido de cadastro.</div></div></label></div></div>
+     <div><label class="l">2. Campos extraídos</label><div class="col" style="gap:14px">
+      ${campos.map(({it,i,rows})=>`<div><div class="row" style="margin-bottom:8px"><b style="color:var(--ink)">Condição ${i+1}</b>${chip(it.tipo==='DESC'?'Desconto':'Verba de exposição',it.tipo==='DESC'?'':'gray')}</div><div class="grid2">${rows.map(r=>fieldHtml(i,r)).join('')}</div></div>`).join('')}</div></div>
+     <div class="act" style="margin:0"><div class="row between wrap"><span class="small muted" id="v1hint"></span>
+      <button class="btn pri lg" id="v1btn" data-act="val1ok" data-id="${c.id}" data-low="${nLow}">Confirmar e continuar ${ico('arrow')}</button></div></div>
+    </div></div></div>`;
+}
+/* ---- Itens, regras, aprovação ---- */
+function itemsView(c,p){
+  return `<div class="row between"><h2>Condições deste caso</h2><span class="small muted">Desconto e verba são aprovados separadamente</span></div>`+c.itens.map((it,i)=>itemCard(c,it,i,p)).join('');
+}
+function itemCard(c,it,i,p){
+  const key=c.id+':'+i;const isD=it.tipo==='DESC';
+  const st={aguardando:['Aguardando '+LEVELS[it.alcada],'hum'],recusa_pendente:['Recusa a confirmar','warn'],erro_erp:['Erro do ERP','bad'],concluido:['Cadastrada no SAP','auto'],recusa_enviada:['Recusada e respondida','gray']}[it.status];
+  let act='';
+  if(it.status==='aguardando'){
+    const alertas=(it.alertas&&it.alertas.length)?`<div class="note warn" style="margin-bottom:12px">${ico('alert')}<div><b>Atenção antes de decidir:</b><ul style="margin:6px 0 0 18px">${it.alertas.map(a=>`<li>${esc(a.mensagem)}</li>`).join('')}</ul></div></div>`:'';
+    const subst=it.sugestao?`<label class="row small" style="margin:0 0 10px;cursor:pointer;align-items:flex-start"><input type="checkbox" id="subst_${i}" style="margin-top:3px"> <span><b>Substituir ${esc(it.sugestao.cod_condicao_substituida)}</b>: ${esc(String(it.sugestao.efeito).replace(/(\d{4})-(\d{2})-(\d{2})/g,'$3/$2/$1'))}.</span></label>`:'';
+    if(p.level===it.alcada){
+      act=UI.recusando[key]?`<div class="act"><label class="l">Por que está recusando? (vai para o texto enviado ao fornecedor)</label><textarea id="rj_${i}" placeholder="Ex.: margem da categoria já está pressionada neste trimestre.">${esc(UI.drafts[key]||'')}</textarea>
+        <div class="row" style="margin-top:10px"><button class="btn bad" data-act="rejok" data-id="${c.id}" data-i="${i}">Confirmar recusa</button><button class="btn ghost" data-act="rejcancel" data-k="${key}">Cancelar</button></div></div>`
+      :`<div class="act">${alertas}${subst}<div class="row wrap"><button class="btn pri lg" data-act="approve" data-id="${c.id}" data-i="${i}">${ico('check')} Aprovar ${isD?'desconto':'verba'}</button><button class="btn bad lg" data-act="rejstart" data-k="${key}">${ico('x')} Recusar</button></div><div class="small muted" style="margin-top:8px">Ao aprovar, a condição é cadastrada no SAP automaticamente.</div></div>`;
+    }else act=`<div class="act">${alertas}<div class="note info">${ico('clock')}<div>Esta condição é da alçada <b>${LEVELS[it.alcada]}</b>. ${p.id==='rev'?'Você será avisado se algo precisar da sua ação.':'Não precisa da sua decisão.'}<div style="margin-top:8px"><button class="btn" data-act="sw" data-id="${PERSONAS.find(x=>x.level===it.alcada).id}">Ver como ${PERSONAS.find(x=>x.level===it.alcada).nome} ${ico('arrow')}</button></div></div></div></div>`;
+  }
+  if(it.status==='recusa_pendente'){
+    const D=UI.drafts[key]??it.draft;
+    act=p.id==='rev'?`<div class="act"><div class="row between wrap" style="margin-bottom:8px"><label class="l" style="margin:0">Texto de recusa (revise e edite antes de enviar)</label>${LIVE?chip(ico('gear')+' Rascunho automático','auto'):chip(ico('bot')+' Rascunho da IA','ia')}</div>
+      <textarea id="rt_${i}" data-draft="${key}">${esc(D)}</textarea><div class="row" style="margin-top:10px"><button class="btn pri lg" data-act="sendrec" data-id="${c.id}" data-i="${i}">${ico('send')} Confirmar e enviar ao fornecedor</button><button class="btn ghost" data-act="resetdraft" data-k="${key}" data-id="${c.id}" data-i="${i}">Restaurar texto da IA</button></div></div>`
+      :`<div class="act"><div class="note warn">${ico('clock')}<div>Aguardando a revisora confirmar o texto de recusa.<div style="margin-top:8px"><button class="btn" data-act="sw" data-id="rev">Ver como Ana Souza ${ico('arrow')}</button></div></div></div></div>`;
+  }
+  if(it.status==='erro_erp'){
+    act=`<div class="act"><div class="note bad">${ico('alert')}<div><b>O SAP não aceitou a gravação.</b><div class="small" style="margin-top:2px;font-family:ui-monospace,monospace">${esc(it.erro)}</div><div class="small" style="margin-top:6px">A condição já está aprovada. Reenviar não duplica o cadastro.</div></div></div>
+     ${p.id==='rev'?`<div style="margin-top:12px"><button class="btn pri lg" data-act="retry" data-id="${c.id}" data-i="${i}">${ico('refresh')} Reenviar ao SAP</button></div>`:`<div style="margin-top:12px"><button class="btn" data-act="sw" data-id="rev">Ver como Ana Souza ${ico('arrow')}</button></div>`}</div>`;
+  }
+  if(it.status==='concluido')act=`<div class="act"><div class="note info">${ico('check')}<div>Cadastrada no SAP com o número <b>${it.sap}</b>.</div></div></div>`;
+  if(it.status==='recusa_enviada')act=`<div class="act"><details><summary class="small" style="cursor:pointer;font-weight:700;color:var(--g700)">Ver texto enviado ao fornecedor</summary><div class="mail" style="margin-top:8px;white-space:pre-wrap">${esc(it.recusaTexto)}</div></details></div>`;
+  return `<div class="item"><div class="hd">${chip(isD?'Desconto':'Verba de exposição',isD?'':'gray')}<b style="color:var(--ink)" class="grow">${catN(it.cat)}</b>${st?chip(st[0],st[1]):''}</div>
+   <div class="bd"><div class="row wrap" style="gap:28px"><div><div class="xs muted">${isD?'Desconto':'Verba'}</div><div class="big">${isD?it.valor+'%':brl(it.valor)}</div></div><div><div class="xs muted">Vigência</div><b style="color:var(--ink)">${fmtD(it.ini)} a ${fmtD(it.fim)}</b></div><div><div class="xs muted">Loja</div><b style="color:var(--ink)">${esc(it.loja)}</b></div>${it.alcada?`<div><div class="xs muted">Alçada</div><b style="color:var(--ink)">${LEVELS[it.alcada]}</b></div>`:''}</div>
+    ${it.checks?`<div class="row" style="margin-top:14px">${chip(ico('gear')+' Regras conferidas automaticamente','auto')}</div><div class="checks">${it.checks.map(k=>`<div class="ck ${k.ok?'ok':k.warn?'warn':'no'}"><span class="ico">${ico(k.ok?'check':k.warn?'alert':'x')}</span><div><b>${k.nome}</b><div class="small muted">${esc(k.det)}</div></div></div>`).join('')}</div>`:''}${act}</div></div>`;
+}
+function respostaView(c){
+  const r=c.resposta;
+  return `<div class="card"><div class="row between wrap"><h2>${r.enviada===false?'Resposta ao fornecedor (ainda não enviada)':'Resposta enviada ao fornecedor'}</h2>${chip('Fornecedor','forn')}</div>
+   <div class="mail" style="margin-top:12px"><div class="hd"><b style="color:var(--ink)">Re: ${esc(c.assunto)}</b><div class="small muted">Para: ${esc(c.remetente)}</div></div>
+   <p>Olá, ${esc(c.assina.split(',')[0])}. Recebemos a sua proposta e concluímos a análise.</p>
+   ${r.ok.length?`<p><b>Condições aprovadas e cadastradas:</b></p>${r.ok.map(i=>`<p>• ${itemLabel(i)} em ${catN(i.cat)}, de ${fmtD(i.ini)} a ${fmtD(i.fim)} (${i.sap}).</p>`).join('')}`:''}
+   ${r.no.length?`<p><b>Condições não aprovadas:</b></p>${r.no.map(i=>`<p style="white-space:pre-wrap">• ${itemLabel(i)} em ${catN(i.cat)}.\n${esc(i.recusaTexto)}</p>`).join('')}`:''}
+   <p>Atenciosamente,<br>Time Comercial</p></div></div>`;
+}
+function viewRules(){
+  return shell(`<div class="note info" style="margin-bottom:18px">${ico('shield')}<div>Estas são as regras que o sistema aplica sozinho. Elas vêm da Política Comercial e valem para todos os casos. Mudanças são feitas pela área comercial.</div></div>
+  <div class="cols" style="grid-template-columns:1fr 1fr;gap:18px">
+   <div class="card"><h2>Teto de desconto por categoria</h2><table style="margin-top:8px"><tr><th>Categoria</th><th>Teto</th></tr>${Object.values(CATS).map(c=>`<tr><td>${c.n}</td><td><b>${c.t}%</b></td></tr>`).join('')}</table></div>
+   <div class="card"><h2>Quem aprova</h2><table style="margin-top:8px"><tr><th>Condição</th><th>Alçada</th></tr>
+     <tr><td>Desconto até 10%</td><td><b>Coordenação</b></td></tr><tr><td>Desconto >10% até 20%</td><td><b>Gerência</b></td></tr><tr><td>Desconto >20% até 25%</td><td><b>Diretoria</b></td></tr><tr><td>Desconto >25%</td><td><b style="color:var(--bad)">Recusado</b></td></tr>
+     <tr><td>Verba até R$ 5.000</td><td><b>Gerência</b></td></tr><tr><td>Verba R$ 5.000 a 20.000</td><td><b>Diretoria</b></td></tr><tr><td>Verba acima de R$ 20.000</td><td><b>Comitê</b></td></tr></table></div></div>
+  <div class="card" style="margin-top:18px"><h2>Pré-condições de toda condição</h2><div class="checks" style="margin-top:10px">
+   ${['Fornecedor com cadastro ativo','Vigência de até 12 meses','Vigência não retroativa','Sem sobrepor fornecedor, categoria e loja','Desconto e verba cadastrados e aprovados separadamente'].map(t=>`<div class="ck ok"><span class="ico">${ico('check')}</span><div><b>${t}</b></div></div>`).join('')}</div></div>
+  <div class="card" style="margin-top:18px"><h2>Quem faz o quê</h2><div class="row wrap" style="margin-top:10px;gap:10px">${chip(ico('bot')+' IA: lê e-mail, redige recusa','ia')}${chip(ico('gear')+' Automático: regras, conciliação, roteamento, log','auto')}${chip(ico('user')+' Humano: valida, aprova, confirma recusa, trata erro','hum')}</div></div>`,['Apoio','Regras vigentes']);
+}
+function simModal(){
+  return `<div class="ov" data-act="closemodal"><div class="modal"><div class="row between"><div><h2>Simular e-mail do fornecedor</h2><div class="muted small">No uso real, o e-mail chega sozinho na caixa do time. Aqui, escolha um cenário para ver o caminho.</div></div><button class="btn ghost" data-act="closemodal">${ico('x')}</button></div>
+   <div class="col" style="margin-top:16px;gap:10px">${Object.entries(SC).map(([k,v])=>`<button class="sc" data-act="newcase" data-id="${k}"><div class="grow"><b style="color:var(--ink)">${v.label}</b><div class="small muted">${v.desc}</div></div>${chip(v.tag,v.tag.startsWith('Recusa')||v.tag==='Erro do ERP'?'warn':v.tag==='Segue direto'?'auto':'hum')}</button>`).join('')}</div></div></div>`;
+}
+function busyView(){
+  const b=UI.busy;return `<div class="ov"><div class="modal" style="max-width:460px"><h2>${b.title}</h2><div style="margin-top:10px">${b.steps.map((s,i)=>`<div class="pl ${i<b.at?'done':i===b.at?'on':''}">${i<b.at?`<span class="ico" style="color:var(--g600)">${ico('check')}</span>`:i===b.at?'<span class="spin"></span>':'<span style="width:22px"></span>'}${s}</div>`).join('')}</div></div></div>`;
+}
+
+/* ================= Render / eventos ================= */
+function render(){
+  const root=document.getElementById('root');
+  const r=UI.route=location.hash||'#/casos';
+  let html;
+  if(!S.persona)html=viewLogin();
+  else if(r.startsWith('#/caso/'))html=viewCase(r.slice(7));
+  else if(r==='#/regras')html=viewRules();
+  else html=viewQueue();
+  if(UI.modal==='sim')html+=simModal();
+  if(UI.busy)html+=busyView();
+  if(UI.toast)html+=`<div class="toast">${esc(UI.toast)}</div>`;
+  const sy=window.scrollY; root.innerHTML=html; window.scrollTo(0,sy);
+  updV1();
+}
+function toast(t){UI.toast=t;render();clearTimeout(toast.h);toast.h=setTimeout(()=>{UI.toast=null;render()},2800)}
+function runBusy(title,steps,cb,ms=520){
+  UI.busy={title,steps,at:0};render();
+  let i=0;const h=setInterval(()=>{i++;if(i>=steps.length){clearInterval(h);UI.busy=null;cb();save();render()}else{UI.busy.at=i;render()}},ms);
+}
+function updV1(){
+  const b=document.getElementById('v1btn');if(!b)return;
+  const id=location.hash.slice(7),V=UI.val1[id];if(!V)return;
+  const c=getCase(id);let missing=0;
+  c.itens.forEach((it,i)=>['cat','valor','ini','fim','loja'].forEach(p=>{if(it.conf[p]<80&&!V.ok[`${i}_${p}`])missing++}));
+  b.disabled=missing>0;
+  document.getElementById('v1hint').textContent=missing?`Faltam ${missing} campo(s) para confirmar.`:'Tudo conferido. Pode continuar.';
+}
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');
+  const a=e.target.closest('[data-act]');
+  if(a&&a.dataset.act==='closemodal'){if(e.target.closest('.modal')&&!e.target.closest('button[data-act=closemodal]'))return;UI.modal=null;render();return}
+  if(a){const d=a.dataset;
+    if(LIVE&&['val1ok','approve','rejok','sendrec','retry'].includes(d.act)){liveAct(d);return}
+    switch(d.act){
+      case 'login':S.persona=d.id;UI.tab=null;save();location.hash='#/casos';render();return;
+      case 'sw':S.persona=d.id;save();render();window.scrollTo(0,0);return;
+      case 'tab':UI.tab=d.id;render();return;
+      case 'sim':UI.modal='sim';UI.pop=false;render();return;
+      case 'bell':UI.pop=!UI.pop;render();return;
+      case 'read':{const n=S.notifs.find(x=>x.id===d.id);if(n){n.lida=true;if(LIVE){S.lidas=S.lidas||{};S.lidas[n.id]=1}}UI.pop=false;save();break}
+      case 'refresh':refresh(true);return;
+      case 'newcase':{UI.modal=null;let nc;
+        runBusy('Processando o e-mail',['Porta de entrada: abrindo o caso','Agente Extrator: lendo e-mail e anexo','Conciliador: buscando o fornecedor'],()=>{nc=newCase(d.id);UI.tab='all';location.hash='#/caso/'+nc.id;toast('Caso '+nc.id+' criado.')});return}
+      case 'val1ok':{const c=getCase(d.id),V=UI.val1[c.id];
+        const edits=[...document.querySelectorAll('[data-fi]')].map(el=>({i:+el.dataset.fi,p:el.dataset.fp,v:el.value}));
+        runBusy('Rodando as regras',['Conferindo cadastro do fornecedor','Checando pré-condições e teto','Roteando para a alçada'],()=>{confirmVal1(c,{fornId:V.forn==='none'?null:V.forn,edits});delete UI.val1[c.id];toast('Validação concluída.')});return}
+      case 'approve':{const c=getCase(d.id);approve(c,+d.i);save();toast('Aprovado. Cadastro no SAP em andamento.');return}
+      case 'rejstart':UI.recusando[d.k]=true;render();return;
+      case 'rejcancel':delete UI.recusando[d.k];render();return;
+      case 'rejok':{const t=document.getElementById('rj_'+d.i);const v=t.value.trim();if(v.length<5){t.style.borderColor='var(--bad)';t.placeholder='Escreva o motivo para continuar.';t.focus();return}
+        const c=getCase(d.id);delete UI.recusando[c.id+':'+d.i];reject(c,+d.i,v);save();toast('Recusa registrada. A IA redigiu o texto para o revisor.');return}
+      case 'sendrec':{const c=getCase(d.id);const key=c.id+':'+d.i;const t=document.getElementById('rt_'+d.i).value.trim();if(!t)return;delete UI.drafts[key];sendRecusa(c,+d.i,t);save();toast('Recusa enviada ao fornecedor.');return}
+      case 'resetdraft':delete UI.drafts[d.k];render();return;
+      case 'retry':{const c=getCase(d.id);retrySap(c,+d.i);save();toast('Reenviado ao SAP.');return}
+      case 'reset':S={cases:[],notifs:[],n:1037,persona:S.persona};seed();save();render();return;
+    }}
+  if(g){UI.pop=false;location.hash=g.dataset.go;window.scrollTo(0,0)}
+  else if(UI.pop&&!e.target.closest('.pop')){UI.pop=false;render()}
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.dataset.act==='switch'){S.persona=t.value;save();render();return}
+  if(t.name==='forn'){const id=location.hash.slice(7);UI.val1[id].forn=t.value;render();return}
+  if(t.dataset.fi!==undefined){const id=location.hash.slice(7),V=UI.val1[id];if(V){(V.ed=V.ed||{})[`${t.dataset.fi}_${t.dataset.fp}`]=t.value}}
+  if(t.dataset.lowok){const id=location.hash.slice(7);UI.val1[id].ok[t.dataset.lowok]=t.checked;updV1()}
+});
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset.draft)UI.drafts[t.dataset.draft]=t.value;
+  if(t.dataset.fi!==undefined){const V=UI.val1[location.hash.slice(7)];if(V)(V.ed=V.ed||{})[`${t.dataset.fi}_${t.dataset.fp}`]=t.value}});
+const hl=(ev,on)=>{document.querySelectorAll('mark[data-ev="'+ev+'"]').forEach(m=>m.classList.toggle('hl',on))};
+document.addEventListener('mouseover',e=>{const t=e.target.closest('[data-ev]');if(t&&t.tagName!=='MARK')hl(t.dataset.ev,true)});
+document.addEventListener('mouseout',e=>{const t=e.target.closest('[data-ev]');if(t&&t.tagName!=='MARK')hl(t.dataset.ev,false)});
+document.addEventListener('focusin',e=>{const t=e.target.closest('[data-ev]');if(t)hl(t.dataset.ev,true)});
+document.addEventListener('focusout',e=>{const t=e.target.closest('[data-ev]');if(t)hl(t.dataset.ev,false)});
+window.addEventListener('hashchange',()=>{UI.pop=false;render()});
+
+/* ================= Dados de demonstração ================= */
+function seed(){
+  const pr=S.persona;
+  // concluído
+  let c=newCase('limpo',2900);S.persona='ger';approve(c,0);
+  // erro do ERP
+  c=newCase('erp',420);S.persona='coord';approve(c,0);
+  // recusa a confirmar
+  newCase('teto',95);
+  // verba + desconto aguardando alçadas
+  newCase('verba',55);
+  // aguardando gerência
+  newCase('limpo',30);
+  // ambíguo aguardando revisão
+  newCase('ambiguo',12);
+  S.persona=pr;
+  // ordena por recebido (mais recente primeiro)
+  S.cases.sort((a,b)=>new Date(b.recebido)-new Date(a.recebido));
+  S.notifs=S.notifs.filter(n=>{const c=getCase(n.caseId);if(!c||c.stage==='fim')return false;
+    if(n.level==='rev')return c.stage==='val1'||c.itens.some(i=>['recusa_pendente','erro_erp'].includes(i.status));
+    return c.itens.some(i=>i.status==='aguardando'&&i.alcada===n.level)});
+}
+if(LIVE)load();else if(!load())seed();
+if(!location.hash)location.hash=S.persona?'#/casos':'#/login';
+render();
+if(LIVE){refresh();setInterval(()=>{if(!document.hidden)refresh()},CONFIG.POLL_MS);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()})}
+</script>
+</body>
+</html>
