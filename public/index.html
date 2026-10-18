@@ -196,7 +196,7 @@ const brl=v=>'R$ '+Number(v).toLocaleString('pt-BR');
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const diffDays=(a,b)=>Math.round((new Date(b)-new Date(a))/day);
 const hhmm=iso=>new Date(iso).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-const ago=iso=>{const m=Math.round((Date.now()-new Date(iso))/60000);if(m<2)return 'agora';if(m<60)return m+' min';const h=Math.round(m/60);if(h<24)return h+' h';return Math.round(h/24)+' d'};
+const ago=iso=>{const t=new Date(iso).getTime();if(isNaN(t))return '';const m=Math.max(0,Math.floor((Date.now()-t)/60000));if(m<1)return 'agora';if(m<60)return 'há '+m+' min';const h=Math.floor(m/60);if(h<24)return 'há '+h+' h'+(m%60?' '+(m%60)+' min':'');const d=Math.floor(h/24);return 'há '+d+(d===1?' dia':' dias')};
 const alcadaDesc=p=>p<=10?'coord':p<=20?'ger':p<=25?'dir':null;
 const alcadaVerba=v=>v<=5000?'ger':v<=20000?'dir':'com';
 /* condições já vigentes no ERP (usadas na checagem de sobreposição) */
@@ -484,7 +484,7 @@ function shell(inner,title){
 function popHtml(){
   const p=persona();const key=p.id==='rev'?'rev':p.level;const l=S.notifs.filter(n=>n.level===key).slice(0,6);
   return `<div class="pop"><div style="padding:6px 12px 8px" class="row between"><h3>Mensagens para você</h3><span class="xs muted">com link direto</span></div>
-   ${l.length?l.map(n=>`<a data-go="#/caso/${n.caseId}" data-act="read" data-id="${n.id}"><div class="row between"><b style="color:var(--ink)">${n.txt}</b>${n.lida?'':'<span class="chip">nova</span>'}</div><div class="xs muted">${ago(n.t)} atrás · Abrir caso ${ico('arrow')}</div></a>`).join(''):'<div class="muted small" style="padding:14px">Nenhuma mensagem por enquanto.</div>'}</div>`;
+   ${l.length?l.map(n=>`<a data-go="#/caso/${n.caseId}" data-act="read" data-id="${n.id}"><div class="row between"><b style="color:var(--ink)">${n.txt}</b>${n.lida?'':'<span class="chip">nova</span>'}</div><div class="xs muted">${ago(n.t)} · Abrir caso ${ico('arrow')}</div></a>`).join(''):'<div class="muted small" style="padding:14px">Nenhuma mensagem por enquanto.</div>'}</div>`;
 }
 function viewQueue(){
   const p=persona();
@@ -506,7 +506,7 @@ function viewQueue(){
 function caseRow(c,p){
   const t=tasks(c,p),si=stageInfo(c);
   return `<div class="card case" data-go="#/caso/${c.id}"><div><div class="row wrap"><b style="color:var(--ink);font-size:16px">${c.id}</b><span class="muted">·</span><b style="color:var(--ink)">${esc(c.fornId?SUPS[c.fornId].nome:c.fornTxt)}</b>${chip(si.txt,si.k)}</div>
-   <div class="small muted" style="margin-top:2px">${esc(c.assunto)} · recebido há ${ago(c.recebido)}</div><div class="items">${c.itens.map(itemChipHtml).join('')}</div></div>
+   <div class="small muted" style="margin-top:2px">${esc(c.assunto)} · recebido ${ago(c.recebido)}</div><div class="items">${c.itens.map(itemChipHtml).join('')}</div></div>
    <div>${t.length?`<button class="btn pri">${t[0]} ${ico('arrow')}</button>`:`<button class="btn">${ico('eye')} Ver caso</button>`}</div></div>`;
 }
 function stepper(c){
@@ -525,7 +525,7 @@ function viewCase(id){
   const main=c.stage==='val1'?val1View(c,p):itemsView(c,p);
   return shell(`
    <div class="row between wrap"><button class="btn ghost" data-go="#/casos">${ico('back')} Voltar para a lista</button>
-    <div class="row">${chip(si.txt,si.k)}<span class="small muted">Recebido há ${ago(c.recebido)}</span></div></div>
+    <div class="row">${chip(si.txt,si.k)}<span class="small muted">Recebido ${ago(c.recebido)}</span></div></div>
    <div class="card" style="margin-top:12px;padding:6px 20px 8px"><div class="row between wrap" style="margin-top:12px"><div><h1>${c.id} · ${esc(c.fornId?SUPS[c.fornId].nome:c.fornTxt)}</h1><div class="muted">${esc(c.assunto)}</div></div></div>${stepper(c)}</div>
    <div class="cols ${c.stage==='val1'&&p.id==='rev'?'one':''}" style="margin-top:20px"><div class="col" style="gap:18px">${main}${c.resposta?respostaView(c):''}</div>
    <div class="col"><div class="card"><h3>Resumo</h3><div class="col small" style="gap:8px;margin-top:10px">
